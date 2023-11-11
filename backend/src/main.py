@@ -7,14 +7,17 @@ from sqladmin import Admin
 from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
-from starlette.staticfiles import StaticFiles
 
+from admin.auth import authentication_backend
 from admin.example import ExampleAdmin, ExamplePhotoAdmin
 from config import LOGGING_CONFIG, get_settings
+from container import Container
 from db.database import engine, get_session
+from dependencies.auth import get_auth_service
 from dependencies.example import get_example_service, get_uow
 from dependencies.stub import get_session_stub
 from routers.example import router as example_router
+from services.auth import AuthServiceInterface
 from services.example import ExampleServiceInterface
 from uow import UnitOfWorkInterface
 
@@ -27,8 +30,8 @@ app = FastAPI(title='architecture_landing')
 app.dependency_overrides[UnitOfWorkInterface] = get_uow
 app.dependency_overrides[get_session_stub] = get_session
 app.dependency_overrides[ExampleServiceInterface] = get_example_service
+app.dependency_overrides[AuthServiceInterface] = get_auth_service
 
-app.mount('/media', StaticFiles(directory='media'), name='media')  # temp, for local dev
 
 app.include_router(example_router)
 
@@ -68,7 +71,10 @@ async def unexpected_error_log(request, ex):
 Instrumentator().instrument(app).expose(app)
 
 
-admin = Admin(app, engine)
+admin = Admin(app, engine, authentication_backend=authentication_backend)
 
 admin.add_view(ExampleAdmin)
 admin.add_view(ExamplePhotoAdmin)
+
+container = Container()
+container.wire(modules=['admin.auth'])
