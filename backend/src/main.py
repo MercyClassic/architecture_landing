@@ -2,10 +2,12 @@ import logging
 from logging import config
 
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqladmin import Admin
 from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
+from starlette.staticfiles import StaticFiles
 
 from admin.example import ExampleAdmin, ExamplePhotoAdmin
 from config import LOGGING_CONFIG, get_settings
@@ -26,6 +28,7 @@ app.dependency_overrides[UnitOfWorkInterface] = get_uow
 app.dependency_overrides[get_session_stub] = get_session
 app.dependency_overrides[ExampleServiceInterface] = get_example_service
 
+app.mount('/media', StaticFiles(directory='media'), name='media')  # temp, for local dev
 
 app.include_router(example_router)
 
@@ -60,6 +63,9 @@ async def unexpected_error_log(request, ex):
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=None,
     )
+
+
+Instrumentator().instrument(app).expose(app)
 
 
 admin = Admin(app, engine)

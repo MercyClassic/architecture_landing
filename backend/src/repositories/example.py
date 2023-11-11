@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from models.example import Example
 
@@ -27,6 +28,6 @@ class ExampleRepository(ExampleRepositoryInterface):
         return result.scalars().all()
 
     async def get_example_detail(self, example_id: int) -> Example:
-        query = select(Example).where(Example.id == example_id)
+        query = select(Example).where(Example.id == example_id).options(joinedload(Example.photos))
         result = await self.session.execute(query)
         return result.scalar()

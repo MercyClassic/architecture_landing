@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_HOST: str
     POSTGRES_DB: str
-    MEDIA_PATH: str = 'media/images/'
     DEV_HOSTS: str | List[str]
     PROD_HOSTS: str | List[str]
 

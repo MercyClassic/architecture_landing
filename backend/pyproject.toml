@@ -28,6 +28,8 @@ alembic = "^1.12.1"
 asyncpg = "^0.28.0"
 gunicorn = "^21.2.0"
 uvicorn = "^0.23.2"
+fastapi-storages = "^0.2.0"
+prometheus-fastapi-instrumentator = "^6.1.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"

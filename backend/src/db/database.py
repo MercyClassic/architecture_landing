@@ -14,7 +14,7 @@ DATABASE_URL = 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
     settings.POSTGRES_DB,
 )
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
 async_session_maker = async_sessionmaker(
     engine,
     class_=AsyncSession,

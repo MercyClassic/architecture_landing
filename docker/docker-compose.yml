@@ -19,7 +19,7 @@ services:
     container_name: api
     restart: always
     build:
-      context: ../
+      context: ../backend
     ports:
       - "8000:8000"
     depends_on:
@@ -44,5 +44,27 @@ services:
       timeout: 10s
       retries: 10
       start_period: 1s
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - api
+    volumes:
+      - ../backend/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    depends_on:
+      - prometheus
+    ports:
+      - 3001:3000
+
 volumes:
   postgres_data:

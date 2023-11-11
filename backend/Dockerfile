@@ -21,10 +21,9 @@ RUN apt update \
 WORKDIR /app/backend/src
 
 COPY --chown=app:app . /app/backend
-COPY --chown=app:app ../docker/entrypoint.sh /app/backend/entrypoint.sh
 
 EXPOSE 8000
 
 USER app
 
-CMD ["sh", "/app/entrypoint.sh"]
+CMD ["sh", "/app/backend/entrypoint.sh"]

@@ -33,8 +33,7 @@ class UnitOfWork(UnitOfWorkInterface):
         self.example_repo = ExampleRepository(self.session)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.session.rollback()
-        await self.session.close()
+        pass
 
     async def commit(self):
         await self.session.commit()
