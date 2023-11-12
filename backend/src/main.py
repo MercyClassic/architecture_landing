@@ -8,7 +8,7 @@ from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
-from admin.auth import authentication_backend
+from admin.auth import auth_backend
 from admin.example import ExampleAdmin, ExamplePhotoAdmin
 from config import LOGGING_CONFIG, get_settings
 from container import Container
@@ -70,11 +70,10 @@ async def unexpected_error_log(request, ex):
 
 Instrumentator().instrument(app).expose(app)
 
+container = Container()
+container.wire(modules=['admin.auth'])
 
-admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin = Admin(app, engine, authentication_backend=auth_backend)
 
 admin.add_view(ExampleAdmin)
 admin.add_view(ExamplePhotoAdmin)
-
-container = Container()
-container.wire(modules=['admin.auth'])

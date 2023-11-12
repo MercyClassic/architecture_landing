@@ -59,16 +59,17 @@ class SessionAuthService(AuthServiceInterface):
         return os.urandom(32).hex()
 
     async def authenticate(self, token: str) -> bool:
-        result = await self.repo.is_token_in_db(token)
-        return result
+        token = await self.repo.get_token(token)
+        print(token)
+        return datetime.utcnow() < token.exp_at
 
     async def login(self, username: str, password: str) -> str:
         user = await self.repo.get_user(username)
-        if not self._check_password(password, user.password):
+        if not user or not await self._check_password(password, user.password):
             raise InvalidCredentials
         token = await self._make_token()
         exp_at = datetime.utcnow() + timedelta(days=180)
-        await self.repo.save_token(token, exp_at)
+        await self.repo.save_token(token, exp_at, user.id)
         return token
 
     async def logout(self, token: str) -> None:

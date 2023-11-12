@@ -3,38 +3,42 @@ from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 
 from container import Container
-from services.auth import AuthServiceInterface, SessionAuthService
+from services.auth import SessionAuthService
 
 
-class AdminAuth(AuthenticationBackend):
+class AdminAuthBackend(AuthenticationBackend):
     @inject
-    def __init__(
+    async def login(
         self,
+        request: Request,
         auth_service: SessionAuthService = Provide[Container.session_auth_service],
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
-        self.auth_service = auth_service
-
-    async def login(self, request: Request) -> bool:
+    ) -> bool:
         form = await request.form()
         username, password = form['username'], form['password']
-        token = self.auth_service.login(username, password)
+        token = await auth_service.login(username, password)
         request.session.update({'token': token})
         return True
 
-    async def logout(self, request: Request) -> bool:
-        await self.auth_service.logout(request.session.get('token'))
+    @inject
+    async def logout(
+        self,
+        request: Request,
+        auth_service: SessionAuthService = Provide[Container.session_auth_service],
+    ) -> bool:
+        await auth_service.logout(request.session.get('token'))
         return True
 
-    async def authenticate(self, request: Request) -> bool:
+    @inject
+    async def authenticate(
+        self,
+        request: Request,
+        auth_service: SessionAuthService = Provide[Container.session_auth_service],
+    ) -> bool:
         token = request.session.get('token')
-        if not token or not self.auth_service.authenticate(token):
+        if not token:
             return False
-        return True
+        is_auth = await auth_service.authenticate(token)
+        return is_auth
 
 
-authentication_backend = AdminAuth(
-    secret_key='...',
-)
+auth_backend = AdminAuthBackend(secret_key='...')
