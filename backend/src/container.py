@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from config import get_config
 from db.database import get_session
 from repositories.auth import AuthRepository
 from services.auth import SessionAuthService
@@ -18,4 +19,8 @@ class Container(containers.DeclarativeContainer):
     session_auth_service = providers.Factory(
         SessionAuthService,
         auth_repo,
+    )
+
+    config = providers.Factory(
+        get_config,
     )

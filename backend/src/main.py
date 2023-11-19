@@ -3,14 +3,12 @@ from logging import config
 
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
-from sqladmin import Admin
 from starlette import status
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
-from admin.auth import auth_backend
-from admin.example import ExampleAdmin, ExamplePhotoAdmin
-from config import LOGGING_CONFIG, get_settings
+from admin.configure import configure_admin
+from config import LOGGING_CONFIG, get_config
 from container import Container
 from db.database import engine, get_session
 from dependencies.auth import get_auth_service
@@ -32,20 +30,18 @@ app.dependency_overrides[get_session_stub] = get_session
 app.dependency_overrides[ExampleServiceInterface] = get_example_service
 app.dependency_overrides[AuthServiceInterface] = get_auth_service
 
-
 app.include_router(example_router)
 
-
-settings = get_settings()
-
-origins = [
-    *settings.DEV_HOSTS,
-    *settings.PROD_HOSTS,
-]
+container = Container()
+container.wire(modules=['admin.auth'])
+config = container.config()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        *config.DEV_HOSTS,
+        *config.PROD_HOSTS,
+    ],
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'PUT'],
     allow_headers=[
@@ -70,10 +66,8 @@ async def unexpected_error_log(request, ex):
 
 Instrumentator().instrument(app).expose(app)
 
-container = Container()
-container.wire(modules=['admin.auth'])
-
-admin = Admin(app, engine, authentication_backend=auth_backend)
-
-admin.add_view(ExampleAdmin)
-admin.add_view(ExamplePhotoAdmin)
+configure_admin(
+    app,
+    engine,
+    auth_secret_key=config.AUTH_SECRET_KEY,
+)

@@ -3,15 +3,15 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from config.settings import get_settings
+from config.settings import get_config
 
-settings = get_settings()
+config = get_config()
 
 DATABASE_URL = 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
-    settings.POSTGRES_USER,
-    settings.POSTGRES_PASSWORD,
-    settings.POSTGRES_HOST,
-    settings.POSTGRES_DB,
+    config.POSTGRES_USER,
+    config.POSTGRES_PASSWORD,
+    config.POSTGRES_HOST,
+    config.POSTGRES_DB,
 )
 
 engine = create_async_engine(DATABASE_URL, echo=True)

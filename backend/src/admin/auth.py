@@ -39,6 +39,3 @@ class AdminAuthBackend(AuthenticationBackend):
             return False
         is_auth = await auth_service.authenticate(token)
         return is_auth
-
-
-auth_backend = AdminAuthBackend(secret_key='...')
