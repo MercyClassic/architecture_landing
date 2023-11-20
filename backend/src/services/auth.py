@@ -36,8 +36,8 @@ class AuthServiceInterface(ABC):
 
 
 class SessionAuthService(AuthServiceInterface):
-    def __init__(self, repo: AuthRepositoryInterface):
-        self.repo = repo
+    def __init__(self, auth_repo: AuthRepositoryInterface):
+        self._auth_repo = auth_repo
 
     @staticmethod
     async def _check_password(
@@ -59,18 +59,17 @@ class SessionAuthService(AuthServiceInterface):
         return os.urandom(32).hex()
 
     async def authenticate(self, token: str) -> bool:
-        token = await self.repo.get_token(token)
-        print(token)
+        token = await self._auth_repo.get_token(token)
         return datetime.utcnow() < token.exp_at
 
     async def login(self, username: str, password: str) -> str:
-        user = await self.repo.get_user(username)
+        user = await self._auth_repo.get_user(username)
         if not user or not await self._check_password(password, user.password):
             raise InvalidCredentials
         token = await self._make_token()
         exp_at = datetime.utcnow() + timedelta(days=180)
-        await self.repo.save_token(token, exp_at, user.id)
+        await self._auth_repo.save_token(token, exp_at, user.id)
         return token
 
     async def logout(self, token: str) -> None:
-        await self.repo.delete_token(token)
+        await self._auth_repo.delete_token(token)

@@ -14,9 +14,14 @@ class FileSystemStorage(FapiFileSystemStorage):
     ) -> None:
         self._path = Path(os.path.join(root_dir, relative_path))
         self._path.mkdir(parents=True, exist_ok=True)
+        self._relative_path = relative_path
+
+    def get_path(self, name: str) -> str:
+        return str(self._relative_path / Path(name))
 
 
-file_system_storage = FileSystemStorage(
-    relative_path='media/images',
-    root_dir=get_config().ROOT_DIR,
-)
+def get_file_system_storage():
+    return FileSystemStorage(
+        relative_path='media/images',
+        root_dir=get_config().ROOT_DIR,
+    )

@@ -11,7 +11,7 @@ class ExampleListSchema(BaseModel):
 
 class ExamplePhotoSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    path: str
+    image: str
 
 
 class ExampleDetailSchema(BaseModel):

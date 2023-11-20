@@ -1,22 +1,20 @@
 from fastapi import FastAPI
 from sqladmin import Admin
+from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy.ext.asyncio import AsyncEngine
-
-from admin.auth import AdminAuthBackend
-from admin.example import ExampleAdmin, ExamplePhotoAdmin
 
 
 def configure_admin(
     app: FastAPI,
     engine: AsyncEngine,
-    auth_secret_key: str,
+    auth_backend: AuthenticationBackend,
 ):
+    from admin.example import ExampleAdmin, ExamplePhotoAdmin
+
     admin = Admin(
         app,
         engine,
-        authentication_backend=AdminAuthBackend(
-            secret_key=auth_secret_key,
-        ),
+        authentication_backend=auth_backend,
     )
 
     admin.add_view(ExampleAdmin)

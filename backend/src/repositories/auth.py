@@ -32,16 +32,16 @@ class AuthRepositoryInterface(ABC):
 
 class AuthRepository(AuthRepositoryInterface):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        self._session = session
 
     async def get_token(self, token: str) -> AuthToken:
         query = select(AuthToken).where(AuthToken.token == token)
-        result = await self.session.execute(query)
+        result = await self._session.execute(query)
         return result.scalar()
 
     async def get_user(self, username: str) -> AdminUser:
         query = select(AdminUser).where(AdminUser.username == username)
-        result = await self.session.execute(query)
+        result = await self._session.execute(query)
         user = result.scalar()
         return user
 
@@ -56,10 +56,10 @@ class AuthRepository(AuthRepositoryInterface):
             exp_at=exp_at,
             user_id=user_id,
         )
-        await self.session.execute(stmt)
-        await self.session.commit()
+        await self._session.execute(stmt)
+        await self._session.commit()
 
     async def delete_token(self, token: str) -> None:
         stmt = delete(AuthToken).where(AuthToken.token == token)
-        await self.session.execute(stmt)
-        await self.session.commit()
+        await self._session.execute(stmt)
+        await self._session.commit()

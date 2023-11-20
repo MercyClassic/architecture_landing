@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from exceptions.base import NotFound
 from uow import UnitOfWorkInterface
 
 
@@ -36,4 +37,6 @@ class ExampleService(ExampleServiceInterface):
     ):
         async with uow:
             data = await uow.example_repo.get_example_detail(example_id)
+        if not data:
+            raise NotFound
         return data

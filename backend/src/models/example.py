@@ -5,13 +5,13 @@ from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
-from storages import file_system_storage
+from storages import get_file_system_storage
 
 
 class Example(Base):
     __tablename__ = 'example_of_work'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    image: Mapped[str] = mapped_column(FileType(storage=file_system_storage))
+    image: Mapped[str] = mapped_column(FileType(storage=get_file_system_storage()))
     description: Mapped[str] = mapped_column(String(2000))
     photos: Mapped[List['ExamplePhoto']] = relationship(
         'ExamplePhoto',
@@ -25,7 +25,7 @@ class Example(Base):
 class ExamplePhoto(Base):
     __tablename__ = 'example_photo'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    image: Mapped[str] = mapped_column(FileType(storage=file_system_storage))
+    image: Mapped[str] = mapped_column(FileType(storage=get_file_system_storage()))
     example_id: Mapped[int] = mapped_column(ForeignKey('example_of_work.id'))
     example: Mapped['Example'] = relationship(
         'Example',

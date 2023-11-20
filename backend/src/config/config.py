@@ -12,6 +12,11 @@ class Config(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_DB: str
 
+    POSTGRES_USER_TEST: str
+    POSTGRES_PASSWORD_TEST: str
+    POSTGRES_HOST_TEST: str
+    POSTGRES_DB_TEST: str
+
     DEV_HOSTS: str | List[str]
     PROD_HOSTS: str | List[str]
 
