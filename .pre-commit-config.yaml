@@ -12,7 +12,7 @@ repos:
     hooks:
       - id: black
         exclude: ^migrations/
-        args: [ --skip-string-normalization, --line-length=100, ./backend/src ]
+        args: [ --skip-string-normalization, --line-length=100, ./backend/src/app ]
         language_version: python3
 
   - repo: https://github.com/timothycrosley/isort

@@ -10,8 +10,8 @@ from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from models.example import Example, ExamplePhoto
-from schemas.example import ExampleDetailSchema, ExampleListSchema
+from app.application.models.example import ExampleDetailSchema, ExampleListSchema
+from app.infrastructure.database.models.example import Example, ExamplePhoto
 
 
 class ExampleTests:

@@ -13,12 +13,12 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
-from config import Config
-from db.database import Base
-from dependencies.stub import get_session_stub
-from di.container import Container
-from main import app
-from storages import FileSystemStorage
+from app.application.config import Config
+from app.infrastructure.database.database import Base
+from app.infrastructure.storages import FileSystemStorage
+from app.main.di.container import Container
+from app.main.di.dependencies.stub import get_session_stub
+from app.main.main import app
 
 
 def create_test_session_maker(engine: AsyncEngine):
