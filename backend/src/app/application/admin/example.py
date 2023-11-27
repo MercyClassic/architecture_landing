@@ -1,6 +1,7 @@
-from adapters.database.models.example import Example, ExamplePhoto
 from markupsafe import Markup
 from sqladmin import ModelView
+
+from app.infrastructure.database.models.example import Example, ExamplePhoto
 
 
 class PhotoThumbnailMixin:
