@@ -10,16 +10,10 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from app.application.admin.configure import configure_admin
-from app.application.config import LOGGING_CONFIG, Config
+from app.application.config import Config, get_logging_dict
 from app.main.di.container import Container
 from app.main.di.di import init_dependencies
 from app.presentators.api.routers.root import root_router
-
-try:
-    config.dictConfig(LOGGING_CONFIG)
-    logger = logging.getLogger(__name__)
-except ValueError:
-    pass
 
 
 def create_container():
@@ -34,6 +28,9 @@ def create_container():
 
 
 container = create_container()
+
+config.dictConfig(get_logging_dict(container.config().ROOT_DIR))
+logger = logging.getLogger('main')
 
 
 @asynccontextmanager
@@ -85,7 +82,7 @@ add_cors_middleware(app, container.config())
 
 @app.exception_handler(Exception)
 async def unexpected_error_log(request, ex):
-    logger.error(ex)
+    logger.error(ex, exc_info=True)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=None,
