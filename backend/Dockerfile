@@ -3,8 +3,7 @@ FROM python:3.11-slim-buster
 ENV PYTHONDONTWRITEBYTEDECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /app/backend/app
-RUN mkdir -p /app/frontend
+RUN mkdir -p /app/backend/src
 
 COPY ./pyproject.toml /app/backend/pyproject.toml
 
