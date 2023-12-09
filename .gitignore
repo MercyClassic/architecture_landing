@@ -5,3 +5,5 @@ logs
 media
 dev
 .pytest_cache
+build
+node_modules

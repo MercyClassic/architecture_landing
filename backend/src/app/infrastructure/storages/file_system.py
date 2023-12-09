@@ -17,7 +17,7 @@ class FileSystemStorage(FapiFileSystemStorage):
         self._relative_path = relative_path
 
     def get_path(self, name: str) -> str:
-        return str(self._relative_path / Path(name))
+        return '/%s' % str(self._relative_path / Path(name))
 
 
 def get_file_system_storage():
