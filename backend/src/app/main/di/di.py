@@ -3,7 +3,7 @@ from functools import partial
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from app.domain.interfaces.services.auth import AuthServiceInterface
+from app.application.interfaces.services.auth import AuthServiceInterface
 from app.domain.interfaces.services.example import ExampleServiceInterface
 from app.infrastructure.database.database import get_session
 from app.infrastructure.database.interfaces.uow import UnitOfWorkInterface

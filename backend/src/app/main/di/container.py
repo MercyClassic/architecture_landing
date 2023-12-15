@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.application.admin.auth import AdminAuthBackend
 from app.application.config import Config
-from app.domain.services.auth import SessionAuthService
+from app.application.services.auth import SessionAuthService
 from app.infrastructure.database.database import create_session_maker, get_session
 from app.infrastructure.database.repositories.auth import AuthRepository
 
@@ -13,20 +13,9 @@ class Container(containers.DeclarativeContainer):
         Config,
     )
 
-    database_url = providers.Factory(
-        lambda config: 'postgresql+asyncpg://%s:%s@%s:5432/%s'
-        % (
-            config.POSTGRES_USER,
-            config.POSTGRES_PASSWORD,
-            config.POSTGRES_HOST,
-            config.POSTGRES_DB,
-        ),
-        config,
-    )
-
     async_engine = providers.Factory(
         create_async_engine,
-        database_url,
+        config().db_uri,
         echo=True,
     )
 

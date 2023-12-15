@@ -42,20 +42,9 @@ class TestContainer(Container):
         Config,
     )
 
-    database_url = providers.Factory(
-        lambda config: 'postgresql+asyncpg://%s:%s@%s:5432/%s'
-        % (
-            config.POSTGRES_USER_TEST,
-            config.POSTGRES_PASSWORD_TEST,
-            config.POSTGRES_HOST_TEST,
-            config.POSTGRES_DB_TEST,
-        ),
-        config,
-    )
-
     async_engine = providers.Factory(
         create_async_engine,
-        database_url,
+        config().test_db_uri,
         poolclass=NullPool,
     )
 

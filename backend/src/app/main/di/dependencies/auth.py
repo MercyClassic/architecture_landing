@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.services.auth import SessionAuthService
+from app.application.services.auth import SessionAuthService
 from app.infrastructure.database.repositories.auth import AuthRepository
 from app.main.di.dependencies.stub import get_session_stub
 

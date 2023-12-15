@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 
 from app.application.exceptions.auth import InvalidCredentials
-from app.domain.interfaces.services.auth import AuthServiceInterface
+from app.application.interfaces.services.auth import AuthServiceInterface
 from app.infrastructure.database.repositories.auth import AuthRepositoryInterface
 
 

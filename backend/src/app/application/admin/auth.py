@@ -1,7 +1,7 @@
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 
-from app.domain.interfaces.services.auth import AuthServiceInterface
+from app.application.interfaces.services.auth import AuthServiceInterface
 
 
 class AdminAuthBackend(AuthenticationBackend):

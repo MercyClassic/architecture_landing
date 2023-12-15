@@ -24,6 +24,24 @@ class Config(BaseSettings):
 
     AUTH_SECRET_KEY: str
 
+    @property
+    def db_uri(self) -> str:
+        return 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
+            self.POSTGRES_USER,
+            self.POSTGRES_PASSWORD,
+            self.POSTGRES_HOST,
+            self.POSTGRES_DB,
+        )
+
+    @property
+    def test_db_uri(self) -> str:
+        return 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
+            self.POSTGRES_USER_TEST,
+            self.POSTGRES_PASSWORD_TEST,
+            self.POSTGRES_HOST_TEST,
+            self.POSTGRES_DB_TEST,
+        )
+
     @field_validator('DEV_HOSTS')
     def prepare_dev_hosts(cls, value):
         return [f'http://{host}' for host in value.split(', ')]
