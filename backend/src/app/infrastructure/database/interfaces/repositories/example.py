@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.common.infrastructure.db.interfaces.repositories.sqlalchemy_gateway import (
+from app.infrastructure.database.interfaces.repositories.sqlalchemy_gateway import (
     SQLAlchemyBaseGateway,
 )
 

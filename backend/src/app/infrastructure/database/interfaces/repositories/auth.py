@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from app.common.infrastructure.db.interfaces.repositories.sqlalchemy_gateway import (
+from app.infrastructure.database.interfaces.repositories.sqlalchemy_gateway import (
     SQLAlchemyBaseGateway,
 )
 from app.infrastructure.database.models.users import AdminUser, AuthToken

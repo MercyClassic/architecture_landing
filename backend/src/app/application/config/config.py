@@ -1,55 +1,41 @@
+import logging
+import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+logger = logging.getLogger(__name__)
 
 
-class Config(BaseSettings):
-    model_config = SettingsConfigDict(env_file=('.env', '../.env'), extra='ignore')
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_HOST: str
-    POSTGRES_DB: str
+class ConfigParseError(ValueError):
+    pass
 
-    POSTGRES_USER_TEST: str
-    POSTGRES_PASSWORD_TEST: str
-    POSTGRES_HOST_TEST: str
-    POSTGRES_DB_TEST: str
 
+@dataclass
+class Config:
     DEV_HOSTS: str | List[str]
     PROD_HOSTS: str | List[str]
 
-    ROOT_DIR: str = '%s' % Path(__file__).parent.parent.parent
-
     AUTH_SECRET_KEY: str
 
-    @property
-    def db_uri(self) -> str:
-        return 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
-            self.POSTGRES_USER,
-            self.POSTGRES_PASSWORD,
-            self.POSTGRES_HOST,
-            self.POSTGRES_DB,
-        )
+    ROOT_DIR: str = '%s' % Path(__file__).parent.parent.parent
 
-    @property
-    def test_db_uri(self) -> str:
-        return 'postgresql+asyncpg://%s:%s@%s:5432/%s' % (
-            self.POSTGRES_USER_TEST,
-            self.POSTGRES_PASSWORD_TEST,
-            self.POSTGRES_HOST_TEST,
-            self.POSTGRES_DB_TEST,
-        )
-
-    @field_validator('DEV_HOSTS')
-    def prepare_dev_hosts(cls, value):
-        return [f'http://{host}' for host in value.split(', ')]
-
-    @field_validator('PROD_HOSTS')
-    def prepare_prod_hosts(cls, value):
-        return [f'https://{host}' for host in value.split(', ')]
+    def __post_init__(self):
+        self.DEV_HOSTS = [f'http://{host}' for host in self.DEV_HOSTS.split(', ')]
+        self.PROD_HOSTS = [f'https://{host}' for host in self.PROD_HOSTS.split(', ')]
 
 
-def get_config() -> Config:
-    return Config()
+def get_str_env(key: str) -> str:
+    value = os.getenv(key)
+    if not value:
+        logger.error(f'{key} is not set')
+        raise ConfigParseError(f'{key} is not set')
+    return value
+
+
+def load_config():
+    return Config(
+        DEV_HOSTS=get_str_env('DEV_HOSTS'),
+        PROD_HOSTS=get_str_env('PROD_HOSTS'),
+        AUTH_SECRET_KEY=get_str_env('AUTH_SECRET_KEY'),
+    )

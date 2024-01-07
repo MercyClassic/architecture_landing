@@ -1,4 +1,5 @@
 import asyncio
+import os
 from functools import partial
 from typing import AsyncGenerator
 
@@ -38,13 +39,9 @@ async def override_get_session(
 
 
 class TestContainer(Container):
-    config = providers.Factory(
-        Config,
-    )
-
     async_engine = providers.Factory(
         create_async_engine,
-        config().test_db_uri,
+        os.environ['test_db_uri'],
         poolclass=NullPool,
     )
 
@@ -102,5 +99,5 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
 def get_test_file_system_storage():
     return FileSystemStorage(
         relative_path='media/test_images',
-        root_dir=container.config().ROOT_DIR,
+        root_dir=Config.ROOT_DIR,
     )

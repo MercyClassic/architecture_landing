@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi_storages import FileSystemStorage as FapiFileSystemStorage
 
-from app.application.config import get_config
+from app.application.config import Config
 
 
 class FileSystemStorage(FapiFileSystemStorage):
@@ -23,5 +23,5 @@ class FileSystemStorage(FapiFileSystemStorage):
 def get_file_system_storage():
     return FileSystemStorage(
         relative_path='media/images',
-        root_dir=get_config().ROOT_DIR,
+        root_dir=Config.ROOT_DIR,
     )
